@@ -1,5 +1,8 @@
 version: "3.9"
 
+volumes:
+    tango_data: {}
+
 services:
   backend:
     build:
@@ -24,12 +27,14 @@ services:
 
   postgres:
     image: postgres:10-alpine
+    volumes:
+      - tango_data:/var/lib/postgresql/data
     env_file: .env
 
   nginx:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8000:80"
     depends_on:
       - backend
     volumes:

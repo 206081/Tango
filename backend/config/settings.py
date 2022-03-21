@@ -1,5 +1,5 @@
 """
-Django settings for tango project.
+Django settings for Tango project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/dev/topics/settings/
@@ -8,7 +8,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/dev/ref/settings/
 """
 import environ
-from datetime import timedelta
 
 ROOT_DIR = environ.Path(__file__) - 2
 
@@ -29,9 +28,12 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     "rest_framework",
+    "django_extensions",
 ]
 
-LOCAL_APPS = []
+LOCAL_APPS = [
+    "apps.users",
+]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -56,15 +58,14 @@ SECRET_KEY = env.str("SECRET_KEY")
 
 # DOMAINS
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
-# DOMAIN = env.str("DOMAIN")
 
 
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = [
-    ("Michał Sikora", "206081@tango_trello.com"),
-    ("Paweł Krystian", "187730@tango_trello.com"),
+    ("Michał Sikora", "206081@edu.p.lodz.com"),
+    ("Paweł Krystian", "187730@edu.p.lodz.com"),
 ]
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -192,6 +193,11 @@ AUTH_PASSWORD_VALIDATORS = [
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+# Custom user app defaults
+# Select the correct user model
+AUTH_USER_MODEL = "users.User"
+
 
 # DJANGO REST FRAMEWORK
 # ------------------------------------------------------------------------------
