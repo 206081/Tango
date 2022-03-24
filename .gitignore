@@ -1,3 +1,6 @@
+# PyCharm
+/.idea/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -26,6 +29,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+webpack-stats.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -127,3 +131,41 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+### OSX ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# sftp configuration file
+sftp-config.json
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# npm
+node_modules
+frontend/package-lock.json
+
+# Compass
+.sass-cache
+
+# User-uploaded media
+media/
+
+# Collected staticfiles
+*/staticfiles/
+
+.cache/
+**/certs
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
