@@ -147,6 +147,8 @@ yarn-error.log*
 
 # npm
 node_modules
+frontend/node_modules
+frontend/package-lock.json
 
 # Compass
 .sass-cache
