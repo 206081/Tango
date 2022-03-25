@@ -197,6 +197,7 @@ AUTHENTICATION_BACKENDS = [
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = "users.User"
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # DJANGO REST FRAMEWORK
