@@ -158,6 +158,7 @@ media/
 
 # Collected staticfiles
 */staticfiles/
+backend/staticfiles
 
 .cache/
 **/certs
