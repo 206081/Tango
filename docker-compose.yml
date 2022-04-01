@@ -27,6 +27,8 @@ services:
 
   postgres:
     image: postgres:10-alpine
+    ports:
+      - "5432:5432"
     volumes:
       - tango_data:/var/lib/postgresql/data
     env_file: .env

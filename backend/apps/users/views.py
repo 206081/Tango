@@ -1,11 +1,8 @@
-import requests
 from uuid import uuid4
 
-from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import render_to_string
-
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -47,17 +44,6 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
     @action(methods=["POST"], detail=False)
-    def login(self, request, format=None):
-        email = request.data.get("email", None)
-        password = request.data.get("password", None)
-        user = authenticate(username=email, password=password)
-
-        if user:
-            login(request, user)
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    @action(methods=["POST"], detail=False)
     def register(self, request):
         last_name = request.data.get("last_name", None)
         first_name = request.data.get("first_name", None)
@@ -68,7 +54,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({"status": 210})
 
         # user creation
-        user = User.objects.create(
+        user = User.objects.create_user(
             email=email,
             password=password,
             last_name=last_name,
