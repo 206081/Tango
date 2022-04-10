@@ -6,6 +6,9 @@ from django.template.loader import render_to_string
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.users.models import User
 from apps.users.serializers import UserSerializer, UserWriteSerializer
@@ -88,3 +91,15 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class LogoutViewSet(APIView):
+    def post(self, request, *args, **kwargs):
+        if self.request.data.get("all"):
+            for token in OutstandingToken.objects.filter(user=request.user):
+                BlacklistedToken.objects.get_or_create(token=token)
+            return Response({"status": "All Tokens Blacklisted."})
+        refresh_token = self.request.data.get("refresh_token")
+        token = RefreshToken(token=refresh_token)
+        token.blacklist()
+        return Response({"status": "Token Blacklisted."})

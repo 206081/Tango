@@ -10,4 +10,3 @@ api.trailing_slash = "/?"
 # Users API
 api.register(r"users", UserViewSet)
 api.register(r"tables", TableViewSet)
-api.register(r"tables/(?P<pk>\w{0,50})", TableViewSet)
