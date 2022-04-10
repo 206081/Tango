@@ -1,6 +1,20 @@
 <script>
 export default {
-  name: "HeaderComponent"
+  name: "HeaderComponent",
+  computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    }
+  },
+  methods: {
+    handleLogout() {
+      this.$store.dispatch("auth/logout").then(
+        () => {
+          this.$router.push("/login")
+        }
+      );
+    }
+  }
 }
 </script>
 
@@ -13,7 +27,8 @@ export default {
       </h2>
     </div>
     <div class="navButtons">
-      <router-link to="/login"><button>Login</button></router-link>
+      <router-link to="/login" v-if="!loggedIn"><button>Login</button></router-link>
+      <button v-on:click="handleLogout" v-else>Logout</button>
     </div>
   </div>
 </template>
@@ -25,6 +40,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 10;
   }
 
   .logoSection {

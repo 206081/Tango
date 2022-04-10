@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <router-view />
+    <router-view/>
   </div>
 </template>
 
@@ -11,9 +11,10 @@ export default {
 </script>
 
 <style scoped>
-  .page {
-    display: flex;
-    flex-grow: 1;
-    align-self: center;
-  }
+.page {
+  display: flex;
+  flex-grow: 1;
+  justify-content: center;
+  margin-top: -20px;
+}
 </style>
