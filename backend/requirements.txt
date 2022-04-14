@@ -42,3 +42,4 @@ wcwidth==0.2.5
 Werkzeug==1.0.1
 djangorestframework-simplejwt
 djangorestframework==3.12.4
+drf-nested-routers

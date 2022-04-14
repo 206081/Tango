@@ -1,12 +1,18 @@
-from rest_framework import routers
+from rest_framework_nested import routers
 
-from apps.tables.views import TableViewSet
+from apps.tables.views import CardViewSet, ListViewSet, TableViewSet
 from apps.users.views import UserViewSet
 
 # Settings
-api = routers.DefaultRouter()
-api.trailing_slash = "/?"
+router = routers.DefaultRouter()
+router.trailing_slash = "/?"
 
 # Users API
-api.register(r"users", UserViewSet)
-api.register(r"tables", TableViewSet)
+router.register(r"users", UserViewSet)
+router.register(r"tables", TableViewSet, basename="tables")
+
+tables_router = routers.NestedSimpleRouter(router, r"tables", lookup="table")
+tables_router.register(r"lists", ListViewSet, basename="lists")
+
+lists_router = routers.NestedSimpleRouter(tables_router, r"lists", lookup="list")
+lists_router.register(r"cards", CardViewSet, basename="cards")
