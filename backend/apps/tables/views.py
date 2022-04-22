@@ -1,7 +1,9 @@
 from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
+from .codes import ListCode, ListDetails, ListMessage, TableCode, TableDetails, TableMessage
 from .serializers import (
     CardCreateSerializer,
     CardListSerializer,
@@ -25,26 +27,83 @@ class TableViewSet(ViewSet):
         serializer = TableCreateSerializer(data=modified_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "detail": TableDetails.create,
+                "code": TableCode.create,
+                "messages": [
+                    {
+                        "message": TableMessage.create,
+                    }
+                ],
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     def list(self, request):
         modified_data = request.data.copy()
         serializer = TableListSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.get_tables())
+        return Response(
+            {
+                "detail": TableDetails.list,
+                "code": TableCode.list,
+                "messages": [
+                    {
+                        "message": TableMessage.list,
+                    }
+                ],
+                "data": serializer.get_tables(),
+            },
+        )
 
     def retrieve(self, request, pk):
         modified_data = request.data.copy()
+
+        if response := get_user_table(request.user, pk):
+            return response
+
         modified_data["pk"] = pk
         serializer = TableListSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.get_table())
+        return Response(
+            {
+                "detail": TableDetails.retrieve,
+                "code": TableCode.retrieve,
+                "messages": [
+                    {
+                        "message": TableMessage.retrieve,
+                    }
+                ],
+                "data": serializer.get_table(),
+            },
+        )
 
     def update(self, request, *args, **kwargs):
         pass
 
     def destroy(self, request, *args, **kwargs):
         pass
+
+    @action(detail=True)
+    def all(self, request, pk=None):
+        modified_data = request.data.copy()
+        modified_data["pk"] = pk
+        serializer = TableListSerializer(data=modified_data, context={"request": self.request})
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {
+                "detail": TableDetails.all,
+                "code": TableCode.all,
+                "messages": [
+                    {
+                        "message": TableMessage.all,
+                    }
+                ],
+                "data": serializer.get_all(),
+            },
+        )
 
 
 class ListViewSet(ViewSet):
@@ -58,7 +117,19 @@ class ListViewSet(ViewSet):
         serializer = ListCreateSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "detail": ListDetails.create,
+                "code": ListCode.create,
+                "messages": [
+                    {
+                        "message": ListMessage.create,
+                    }
+                ],
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     def list(self, request, table_pk=None):
         modified_data = self.request.data.copy()

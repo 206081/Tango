@@ -48,8 +48,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(methods=["POST"], detail=False)
     def register(self, request):
-        last_name = request.data.get("last_name", None)
-        first_name = request.data.get("first_name", None)
+        last_name = request.data.get("last_name", "last")
+        first_name = request.data.get("first_name", "first")
         email = request.data.get("email", None)
         password = request.data.get("password", None)
 
@@ -99,7 +99,7 @@ class LogoutViewSet(APIView):
             for token in OutstandingToken.objects.filter(user=request.user):
                 BlacklistedToken.objects.get_or_create(token=token)
             return Response({"status": "All Tokens Blacklisted."})
-        refresh_token = self.request.data.get("refresh_token")
+        refresh_token = self.request.data.get("refresh")
         token = RefreshToken(token=refresh_token)
         token.blacklist()
         return Response({"status": "Token Blacklisted."})

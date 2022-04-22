@@ -53,6 +53,9 @@ class List(models.Model):
             "Archive": self.is_archive,
         }
 
+    class Meta:
+        unique_together = [["name", "table"]]
+
 
 class Card(models.Model):
     name = models.CharField(verbose_name="Name", max_length=255)
@@ -69,6 +72,9 @@ class Card(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_general_info(self):
+        return {"Id": self.pk, "Name": self.name}
 
     def pretty_str(self):
         return {
