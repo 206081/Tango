@@ -22,7 +22,7 @@ export default {
   methods: {
     getTables() {
       const resp = TablesService.getAllTables()
-      console.log('resp ', resp)
+      console.log('resp ', resp.data)
     }
   }
 }
