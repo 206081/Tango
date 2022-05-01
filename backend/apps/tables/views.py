@@ -3,7 +3,17 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from .codes import ListCode, ListDetails, ListMessage, TableCode, TableDetails, TableMessage
+from .codes import (
+    CardCode,
+    CardDetails,
+    CardMessage,
+    ListCode,
+    ListDetails,
+    ListMessage,
+    TableCode,
+    TableDetails,
+    TableMessage,
+)
 from .serializers import (
     CardCreateSerializer,
     CardListSerializer,
@@ -140,7 +150,18 @@ class ListViewSet(ViewSet):
         modified_data["table"] = table_pk
         serializer = ListListSerializer(data=modified_data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.get_lists())
+        return Response(
+            {
+                "detail": ListDetails.list,
+                "code": ListCode.list,
+                "messages": [
+                    {
+                        "message": ListMessage.list,
+                    }
+                ],
+                "data": serializer.get_lists(),
+            },
+        )
 
     def retrieve(self, request, pk, table_pk=None):
         modified_data = request.data.copy()
@@ -152,7 +173,18 @@ class ListViewSet(ViewSet):
         modified_data["table"] = table_pk
         serializer = ListListSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.get_list())
+        return Response(
+            {
+                "detail": ListDetails.retrieve,
+                "code": ListCode.retrieve,
+                "messages": [
+                    {
+                        "message": ListMessage.retrieve,
+                    }
+                ],
+                "data": serializer.get_list(),
+            },
+        )
 
     def update(self, request, *args, **kwargs):
         pass
@@ -172,7 +204,19 @@ class CardViewSet(ViewSet):
         serializer = CardCreateSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(
+            {
+                "detail": CardDetails.create,
+                "code": CardCode.create,
+                "messages": [
+                    {
+                        "message": CardMessage.create,
+                    }
+                ],
+                "data": serializer.data,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
     def list(self, request, table_pk=None, list_pk=None):
         modified_data = self.request.data.copy()
@@ -183,7 +227,18 @@ class CardViewSet(ViewSet):
         modified_data["list"] = list_pk
         serializer = CardListSerializer(data=modified_data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.get_cards())
+        return Response(
+            {
+                "detail": CardDetails.list,
+                "code": CardCode.list,
+                "messages": [
+                    {
+                        "message": CardMessage.list,
+                    }
+                ],
+                "data": serializer.get_cards(),
+            },
+        )
 
     def retrieve(self, request, pk, table_pk=None, list_pk=None):
         modified_data = request.data.copy()
@@ -195,7 +250,18 @@ class CardViewSet(ViewSet):
         modified_data["list"] = list_pk
         serializer = CardListSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.get_card())
+        return Response(
+            {
+                "detail": CardDetails.retrieve,
+                "code": CardCode.retrieve,
+                "messages": [
+                    {
+                        "message": CardMessage.retrieve,
+                    }
+                ],
+                "data": serializer.get_card(),
+            },
+        )
 
     def update(self, request, *args, **kwargs):
         pass

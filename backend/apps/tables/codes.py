@@ -26,7 +26,7 @@ class TableDetails:
 
 
 class ListCode:
-    table_not_exist = "table_not_exists"
+    table_not_exist = "list_not_exists"
     no_permissions = "no_permissions"
     create = "created"
     retrieve = "retrieve"
@@ -47,3 +47,27 @@ class ListDetails:
     create = "List has been created successfully"
     retrieve = "List has been retrieved successfully"
     list = "List has been listed successfully"
+
+
+class CardCode:
+    table_not_exist = "card_not_exists"
+    no_permissions = "no_permissions"
+    create = "created"
+    retrieve = "retrieve"
+    list = "list"
+
+
+class CardMessage:
+    table_not_exist = "Card does not exists"
+    no_permissions = "No permission"
+    create = "Card created"
+    retrieve = "Card retrieve"
+    list = "Card list"
+
+
+class CardDetails:
+    table_not_exist = "The Card you trying to reach does not exist"
+    no_permissions = "You do not have permissions to reach this card"
+    create = "Card has been created successfully"
+    retrieve = "Card has been retrieved successfully"
+    list = "Card has been listed successfully"

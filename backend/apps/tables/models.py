@@ -17,14 +17,14 @@ class Table(models.Model):
 
     def get_general_info(self):
         return {
-            "Id": self.pk,
-            "Name": self.name,
+            "id": self.pk,
+            "name": self.name,
         }
 
     def get_details(self):
         return {
-            "Id": self.pk,
-            "Name": self.name,
+            "id": self.pk,
+            "name": self.name,
             "owner": [u.email for u in self.owner.all()],
             "members": [u.email for u in self.members.all()],
         }
@@ -41,16 +41,16 @@ class List(models.Model):
 
     def get_general_info(self):
         return {
-            "Id": self.pk,
-            "Name": self.name,
+            "id": self.pk,
+            "name": self.name,
         }
 
     def pretty_str(self):
         return {
-            "Id": self.pk,
-            "Name": self.name,
-            "Table": self.table.get_general_info(),
-            "Archive": self.is_archive,
+            "id": self.pk,
+            "name": self.name,
+            "table": self.table.get_general_info(),
+            "archive": self.is_archive,
         }
 
     class Meta:
@@ -74,14 +74,17 @@ class Card(models.Model):
         return self.name
 
     def get_general_info(self):
-        return {"Id": self.pk, "Name": self.name}
+        return {
+            "id": self.pk,
+            "name": self.name,
+        }
 
     def pretty_str(self):
         return {
-            "Id": self.pk,
-            "Name": self.name,
-            "Description": self.description,
-            "Assignee": self.assignee,
-            "List": self.list.get_general_info(),
-            "Archive": self.is_archive,
+            "id": self.pk,
+            "name": self.name,
+            "description": self.description,
+            "assignee": self.assignee,
+            "list": self.list.get_general_info(),
+            "archive": self.is_archive,
         }
