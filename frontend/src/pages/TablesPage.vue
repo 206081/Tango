@@ -1,5 +1,9 @@
 <template>
-  <div>WIP</div>
+  <div class="container">
+    <p>temp</p>
+    <p>temp</p>
+    <div>{{ tables }}</div>
+  </div>
 </template>
 
 <script>
@@ -8,21 +12,26 @@ import TablesService from "@/_services/tables.service";
 export default {
   name: "TablesPage",
   components: {},
-  data () {},
+  data () {
+    return {
+      tables: []
+    }
+  },
   computed: {
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
     },
   },
   mounted() {
-    if (this.loggedIn) {
-      this.getTables()
+    if (!this.loggedIn) {
+      this.$router.push('/login');
+    } else {
+      this.getTables();
     }
   },
   methods: {
-    getTables() {
-      const resp = TablesService.getAllTables()
-      console.log('resp ', resp.data)
+    async getTables() {
+      TablesService.getAllTables().then(tables =>this.tables = tables)
     }
   }
 }
