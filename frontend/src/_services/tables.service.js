@@ -57,6 +57,15 @@ class TablesService {
         throw error;
       });
   }
+  async getCardDetails(tableId, listId, cardId) {
+    return api.get(API_URL + tableId + '/lists/' + listId + '/cards/' + cardId + '/')
+      .then(response => {
+        return response.data.data
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
 }
 
 export default new TablesService();

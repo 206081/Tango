@@ -2,7 +2,7 @@
   <div class="list-container">
     <div class="list-name">{{ listData.name }}</div>
     <div class="cards-container">
-      <div class="card" v-bind:key="card.id" v-for="card of cards">
+      <div class="card" v-bind:key="card.id" @click="onCardClick(card.id)" v-for="card of cards">
         <span>{{ card.name }}</span>
       </div>
       <div class="controls">
@@ -25,7 +25,10 @@ import TablesService from "@/_services/tables.service";
 
 export default {
   name: "ListComponent",
-  props: ['listData'],
+  props: {
+    listData: { type: Object },
+    showCardDetails: { type: Function },
+  },
   data() {
     return {
       cards: [],
@@ -67,6 +70,14 @@ export default {
         }
       } else {
         this.addCardMode = true;
+      }
+    },
+    async onCardClick(cardId) {
+      try {
+        const details = await TablesService.getCardDetails(this.listData.table.id, this.listData.id, cardId)
+        this.showCardDetails(details)
+      } catch (error) {
+        console.log(error)
       }
     }
   }

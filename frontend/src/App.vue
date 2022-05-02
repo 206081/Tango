@@ -1,7 +1,8 @@
 <template>
-  <HeaderComponent />
-  <PageComponent />
-  <FooterComponent />
+  <HeaderComponent/>
+  <PageComponent/>
+  <widget-container-modal />
+  <FooterComponent/>
 </template>
 
 <script>
@@ -10,6 +11,7 @@ import FooterComponent from "@/components/FooterComponent";
 import PageComponent from "@/components/PageComponent";
 import eventBus from "@/_common/EventBus";
 import 'vue-next-select/dist/index.min.css'
+import {container} from "jenesius-vue-modal";
 
 export default {
   name: 'App',
@@ -17,6 +19,7 @@ export default {
     PageComponent,
     FooterComponent,
     HeaderComponent,
+    WidgetContainerModal: container,
   },
   methods: {
     logOut() {
@@ -48,7 +51,7 @@ export default {
 }
 
 html, body {
-  height:100%; /*both html and body*/
+  height: 100%; /*both html and body*/
 }
 
 body {

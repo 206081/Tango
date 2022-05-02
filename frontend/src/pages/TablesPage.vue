@@ -10,7 +10,7 @@
     </div>
     <div class="lists-container">
       <div v-bind:key="list.id" v-for="list of lists">
-        <ListComponent v-bind:list-data=list />
+        <ListComponent :show-card-details="openDialog"  :list-data="list" />
       </div>
       <div v-if="selectedTable" class="controls">
         <div v-if="addListMode">
@@ -29,6 +29,8 @@
 import TablesService from "@/_services/tables.service";
 import ListComponent from "@/components/ListComponent";
 import VueSelect from 'vue-next-select'
+import CardDetailsComponent from "@/components/CardDetailsComponent";
+import {openModal} from "jenesius-vue-modal";
 
 export default {
   name: "TablesPage",
@@ -109,6 +111,11 @@ export default {
       } else {
         this.addListMode = true;
       }
+    },
+    openDialog(dialogData) {
+      openModal(CardDetailsComponent, {
+        data: dialogData
+      })
     }
   }
 }
