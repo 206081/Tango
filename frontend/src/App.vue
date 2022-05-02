@@ -9,6 +9,7 @@ import HeaderComponent from "@/components/HeaderComponent";
 import FooterComponent from "@/components/FooterComponent";
 import PageComponent from "@/components/PageComponent";
 import eventBus from "@/_common/EventBus";
+import 'vue-next-select/dist/index.min.css'
 
 export default {
   name: 'App',
