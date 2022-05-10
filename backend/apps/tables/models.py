@@ -32,7 +32,7 @@ class Table(models.Model):
 
 class List(models.Model):
     name = models.CharField(verbose_name="Name", max_length=100)
-    table = models.ForeignKey(Table, verbose_name="Table", on_delete=models.CASCADE, blank=False, related_name="table")
+    table = models.ForeignKey(Table, verbose_name="Table", on_delete=models.CASCADE, blank=False, related_name="lists")
     is_archive = models.BooleanField(verbose_name="Archive", default=False)
     created_at = models.DateTimeField(verbose_name="Registered at", auto_now_add=timezone.now)
 
@@ -60,7 +60,7 @@ class List(models.Model):
 class Card(models.Model):
     name = models.CharField(verbose_name="Name", max_length=255)
     description = models.TextField(verbose_name="Description", max_length=1024)
-    list = models.ForeignKey(List, verbose_name="List", on_delete=models.CASCADE, blank=False, related_name="list")
+    list = models.ForeignKey(List, verbose_name="List", on_delete=models.CASCADE, blank=False, related_name="cards")
     is_archive = models.BooleanField(verbose_name="Archive", default=False)
     assignee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -87,4 +87,28 @@ class Card(models.Model):
             "assignee": self.assignee,
             "list": self.list.get_general_info(),
             "archive": self.is_archive,
+        }
+
+
+class Comment(models.Model):
+    card = models.ForeignKey(Card, verbose_name="Card", on_delete=models.CASCADE, blank=False, related_name="comments")
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        verbose_name="Author",
+        related_name="author",
+    )
+    text = models.TextField()
+    created_at = models.DateTimeField(verbose_name="Created at", auto_now_add=timezone.now)
+
+    def __str__(self):
+        return self.text
+
+    def pretty_str(self):
+        return {
+            "text": self.text,
+            "author": self.author.email,
+            "card": self.card.get_general_info(),
+            "created_at": self.created_at,
         }

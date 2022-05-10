@@ -1,73 +1,82 @@
-class TableCode:
-    table_not_exist = "table_not_exists"
-    no_permissions = "no_permissions"
-    create = "created"
-    retrieve = "retrieve"
-    list = "list"
-    all = "all"
+class Code:
+    class Generic:
+        def __init__(self):
+            self.not_exist = f"{self.__class__.__name__.lower()}_not_exists"
+            self.no_permissions = "no_permissions"
+            self.create = f"{__class__.__name__}created"
+            self.retrieve = f"{__class__.__name__}retrieve"
+            self.list = f"{__class__.__name__}list"
+            self.all = f"{__class__.__name__}all"
+
+    class Table(Generic):
+        pass
+
+    class List(Generic):
+        pass
+
+    class Card(Generic):
+        pass
+
+    class Comment(Generic):
+        pass
+
+    table = Table()
+    list = List()
+    card = Card()
+    comment = Comment()
 
 
-class TableMessage:
-    table_not_exist = "Table does not exists"
-    no_permissions = "No permission"
-    create = "Table created"
-    retrieve = "Table retrieve"
-    list = "Tables list"
-    all = "Tables list with cards"
+class Message:
+    class Generic:
+        def __init__(self):
+            self.not_exist = f"{self.__class__.__name__} does not exists"
+            self.no_permissions = "No permission"
+            self.create = f"{__class__.__name__} created"
+            self.retrieve = f"{__class__.__name__} retrieve"
+            self.list = f"{__class__.__name__} list"
+            self.all = f"{__class__.__name__} all"
+
+    class Table(Generic):
+        pass
+
+    class List(Generic):
+        pass
+
+    class Card(Generic):
+        pass
+
+    class Comment(Generic):
+        pass
+
+    table = Table()
+    list = List()
+    card = Card()
+    comment = Comment()
 
 
-class TableDetails:
-    table_not_exist = "The Table you trying to reach does not exist"
-    no_permissions = "You do not have permissions to reach this table"
-    create = "Table has been created successfully"
-    retrieve = "Table has been retrieved successfully"
-    list = "Tables has been listed successfully"
-    all = "Tables lists with all cards has been listed successfully"
+class Detail:
+    class Generic:
+        def __init__(self):
+            self.not_exist = f"The {self.__class__.__name__.lower()} you trying to reach does not exist"
+            self.no_permissions = f"You do not have permissions to reach this {self.__class__.__name__.lower()}"
+            self.create = f"{__class__.__name__} has been created successfully"
+            self.retrieve = f"{__class__.__name__} has been retrieved successfully"
+            self.list = f"{__class__.__name__} has been listed successfully"
+            self.all = f"{__class__.__name__} lists with all cards has been listed successfully"
 
+    class Table(Generic):
+        pass
 
-class ListCode:
-    table_not_exist = "list_not_exists"
-    no_permissions = "no_permissions"
-    create = "created"
-    retrieve = "retrieve"
-    list = "list"
+    class List(Generic):
+        pass
 
+    class Card(Generic):
+        pass
 
-class ListMessage:
-    table_not_exist = "List does not exists"
-    no_permissions = "No permission"
-    create = "List created"
-    retrieve = "List retrieve"
-    list = "Lists list"
+    class Comment(Generic):
+        pass
 
-
-class ListDetails:
-    table_not_exist = "The List you trying to reach does not exist"
-    no_permissions = "You do not have permissions to reach this list"
-    create = "List has been created successfully"
-    retrieve = "List has been retrieved successfully"
-    list = "List has been listed successfully"
-
-
-class CardCode:
-    table_not_exist = "card_not_exists"
-    no_permissions = "no_permissions"
-    create = "created"
-    retrieve = "retrieve"
-    list = "list"
-
-
-class CardMessage:
-    table_not_exist = "Card does not exists"
-    no_permissions = "No permission"
-    create = "Card created"
-    retrieve = "Card retrieve"
-    list = "Card list"
-
-
-class CardDetails:
-    table_not_exist = "The Card you trying to reach does not exist"
-    no_permissions = "You do not have permissions to reach this card"
-    create = "Card has been created successfully"
-    retrieve = "Card has been retrieved successfully"
-    list = "Card has been listed successfully"
+    table = Table()
+    list = List()
+    card = Card()
+    comment = Comment()

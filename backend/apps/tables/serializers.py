@@ -1,12 +1,10 @@
-from copy import deepcopy
-
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
-from .codes import TableCode, TableDetails, TableMessage
-from ..tables.models import Card, List, Table
+from .codes import Code, Detail, Message
+from ..tables.models import Card, Comment, List, Table
 from ..users.models import User
 
 IS_NOT_ARCHIVE = Q(is_archive=False)
@@ -19,12 +17,12 @@ def get_user_table(user, table_id):
     except ObjectDoesNotExist:
         return Response(
             {
-                "detail": TableDetails.table_not_exist,
-                "code": TableCode.table_not_exist,
+                "detail": Detail.table.not_exist,
+                "code": Code.table.not_exist,
                 "messages": [
                     {
                         "table": table_id,
-                        "message": TableMessage.table_not_exist,
+                        "message": Message.table.not_exist,
                     }
                 ],
             },
@@ -36,12 +34,12 @@ def get_user_table(user, table_id):
     except ObjectDoesNotExist:
         return Response(
             {
-                "detail": TableDetails.no_permissions,
-                "code": TableCode.no_permissions,
+                "detail": Detail.table.no_permissions,
+                "code": Code.table.no_permissions,
                 "messages": [
                     {
                         "table": table_id,
-                        "message": TableMessage.no_permissions,
+                        "message": Message.table.no_permissions,
                     }
                 ],
             },
@@ -156,3 +154,22 @@ class CardListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = ("pk", "list")
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(max_length=1024, required=True)
+
+    class Meta:
+        model = Comment
+        fields = ("id", "author", "text", "card")
+
+
+class CommentListSerializer(serializers.ModelSerializer):
+    pk = serializers.IntegerField(required=False)
+
+    def get_comments(self):
+        return [comment.pretty_str() for comment in Comment.objects.filter(Q(card_id=self.validated_data["card"].pk))]
+
+    class Meta:
+        model = Comment
+        fields = ("pk", "card")
