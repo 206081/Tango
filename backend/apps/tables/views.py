@@ -96,6 +96,10 @@ class TableViewSet(ViewSet):
     @action(detail=True)
     def all(self, request, pk=None):
         modified_data = request.data.copy()
+
+        if response := get_user_table(request.user, pk):
+            return response
+
         modified_data["pk"] = pk
         serializer = TableListSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
@@ -286,7 +290,7 @@ class CardViewSet(ViewSet):
             },
         )
 
-    def partial_update(self, request, pk, table_pk=None, list_pk=None, **kwargs):
+    def partial_update(self, request, pk, table_pk=None, list_pk=None):
         modified_data = {}
 
         if response := get_user_table(request.user, table_pk):
@@ -322,7 +326,7 @@ class CardViewSet(ViewSet):
 class CommentViewSet(ViewSet):
     def create(self, request, table_pk=None, list_pk=None, card_pk=None):
         modified_data = request.data.copy()
-        print("Ababa")
+
         if response := get_user_table(request.user, table_pk):
             return response
 
@@ -348,7 +352,6 @@ class CommentViewSet(ViewSet):
 
     def list(self, request, table_pk=None, list_pk=None, card_pk=None):
         modified_data = self.request.data.copy()
-        print("AbabaLIST")
 
         if response := get_user_table(request.user, table_pk):
             return response
