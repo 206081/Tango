@@ -1,6 +1,6 @@
 from rest_framework_nested import routers
 
-from apps.tables.views import CardViewSet, CommentViewSet, ListViewSet, TableViewSet
+from apps.tables.views import CardViewSet, CommentViewSet, ListViewSet, TableViewSet, TaskViewSet
 from apps.users.views import UserViewSet
 
 # Settings
@@ -18,4 +18,5 @@ lists_router = routers.NestedSimpleRouter(tables_router, r"lists", lookup="list"
 lists_router.register(r"cards", CardViewSet, basename="cards")
 
 cards_router = routers.NestedSimpleRouter(lists_router, r"cards", lookup="card")
+cards_router.register(r"tasks", TaskViewSet, basename="tasks")
 cards_router.register(r"comments", CommentViewSet, basename="comments")

@@ -8,16 +8,16 @@ from .codes import (
     Detail,
     Message,
 )
-from .models import Card
+from .models import Card, Table
 from .serializers import (
     CardCreateSerializer,
     CardListSerializer,
     CommentCreateSerializer,
-    CommentListSerializer,
     ListCreateSerializer,
     ListListSerializer,
     TableCreateSerializer,
     TableListSerializer,
+    TaskCreateSerializer,
     get_user_table,
 )
 
@@ -87,14 +87,74 @@ class TableViewSet(ViewSet):
             },
         )
 
-    def update(self, request, *args, **kwargs):
-        pass
+    def update(self, request, pk):
+        modified_data = request.data.copy()
+
+        if response := get_user_table(request.user, pk):
+            return response
+
+        modified_data["pk"] = pk
+        serializer = TableCreateSerializer(
+            instance=Table.objects.get(id=pk),
+            data=modified_data,
+            context={"request": self.request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            {
+                "detail": Detail.table.update,
+                "code": Code.table.update,
+                "messages": [
+                    {
+                        "message": Message.table.update,
+                    }
+                ],
+                "data": serializer.data,
+            },
+        )
+
+    def partial_update(self, request, pk):
+        modified_data = {}
+
+        if response := get_user_table(request.user, pk):
+            return response
+
+        instance = Table.objects.get(id=pk)
+
+        modified_data["pk"] = pk
+        modified_data["name"] = request.data.get("name", instance.name)
+        modified_data["owner"] = request.data.get("owner", set(owner.pk for owner in instance.owner.get_queryset()))
+        modified_data["members"] = request.data.get(
+            "members", set(member.pk for member in instance.members.get_queryset())
+        )
+        modified_data["is_archive"] = request.data.get("is_archive", instance.is_archive)
+        serializer = TableCreateSerializer(
+            instance=instance,
+            data=modified_data,
+            context={"request": self.request},
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(
+            {
+                "detail": Detail.table.partial_update,
+                "code": Code.table.partial_update,
+                "messages": [
+                    {
+                        "message": Message.table.partial_update,
+                    }
+                ],
+                "data": serializer.data,
+            },
+        )
 
     def destroy(self, request, *args, **kwargs):
         pass
 
     @action(detail=True)
-    def all(self, request, pk=None):
+    def all_table(self, request, pk=None):
         modified_data = request.data.copy()
 
         if response := get_user_table(request.user, pk):
@@ -105,14 +165,33 @@ class TableViewSet(ViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(
             {
-                "detail": Detail.table.all,
-                "code": Code.table.all,
+                "detail": Detail.table.all_table,
+                "code": Code.table.all_table,
                 "messages": [
                     {
-                        "message": Message.table.all,
+                        "message": Message.table.all_table,
                     }
                 ],
-                "data": serializer.get_all(),
+                "data": serializer.get_all_table(),
+            },
+        )
+
+    @action(detail=False)
+    def all_tables(self, request):
+        modified_data = request.data.copy()
+
+        serializer = TableListSerializer(data=modified_data, context={"request": self.request})
+        serializer.is_valid(raise_exception=True)
+        return Response(
+            {
+                "detail": Detail.table.all_tables,
+                "code": Code.table.all_tables,
+                "messages": [
+                    {
+                        "message": Message.table.all_tables,
+                    }
+                ],
+                "data": serializer.get_all_tables(),
             },
         )
 
@@ -351,27 +430,46 @@ class CommentViewSet(ViewSet):
         )
 
     def list(self, request, table_pk=None, list_pk=None, card_pk=None):
-        modified_data = self.request.data.copy()
+        pass
+
+    def retrieve(self, request, *args, **kwargs):
+        pass
+
+    def update(self, request, *args, **kwargs):
+        pass
+
+    def destroy(self, request, *args, **kwargs):
+        pass
+
+
+class TaskViewSet(ViewSet):
+    def create(self, request, table_pk=None, list_pk=None, card_pk=None):
+        modified_data = request.data.copy()
 
         if response := get_user_table(request.user, table_pk):
             return response
-
+        print("in task view")
         modified_data["list"] = list_pk
         modified_data["card"] = card_pk
-        serializer = CommentListSerializer(data=modified_data, context={"request": request})
+        serializer = TaskCreateSerializer(data=modified_data, context={"request": self.request})
         serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(
             {
-                "detail": Detail.comment.list,
-                "code": Code.comment.list,
+                "detail": Detail.task.create,
+                "code": Code.task.create,
                 "messages": [
                     {
-                        "message": Message.comment.list,
+                        "message": Message.task.create,
                     }
                 ],
-                "data": serializer.get_comments(),
+                "data": serializer.data,
             },
+            status=status.HTTP_201_CREATED,
         )
+
+    def list(self, request, *args, **kwargs):
+        pass
 
     def retrieve(self, request, *args, **kwargs):
         pass

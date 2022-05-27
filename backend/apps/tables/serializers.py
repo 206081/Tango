@@ -2,9 +2,10 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from rest_framework import serializers, status
 from rest_framework.response import Response
+from rest_framework.utils import model_meta
 
 from .codes import Code, Detail, Message
-from ..tables.models import Card, Comment, List, Table
+from ..tables.models import Card, Comment, List, Table, Task
 from ..users.models import User
 
 IS_NOT_ARCHIVE = Q(is_archive=False)
@@ -56,12 +57,16 @@ class TableCreateSerializer(serializers.ModelSerializer):
     owner = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=User.objects.filter(is_active=True),
-        required=False,
+        required=True,
+        allow_empty=False,
+        allow_null=False,
     )
     members = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=User.objects.filter(is_active=True),
-        required=False,
+        required=True,
+        allow_empty=False,
+        allow_null=False,
     )
 
     class Meta:
@@ -82,12 +87,12 @@ class TableListSerializer(serializers.ModelSerializer):
     def get_tables(self):
         return [p.get_general_info() for p in get_user_tables(self.validated_data["user"]).order_by("pk")]
 
-    def get_all(self):
-        lists = {
-            lists.id: lists.get_general_info()
-            for lists in List.objects.filter(Q(table_id=self.validated_data["pk"]) & IS_NOT_ARCHIVE)
-        }
+    def get_all_table(self):
+        return self._get_lists(self.validated_data["pk"])
 
+    @staticmethod
+    def _get_lists(pk):
+        lists = {lists.id: lists.get_general_info() for lists in List.objects.filter(Q(table_id=pk) & IS_NOT_ARCHIVE)}
         for key, value in lists.items():
             for card in Card.objects.filter(Q(list_id=key) & IS_NOT_ARCHIVE):
                 if not lists[key].get("Cards"):
@@ -95,6 +100,10 @@ class TableListSerializer(serializers.ModelSerializer):
                 lists[key]["Cards"].append(card.get_general_info())
 
         return {"lists": lists}
+
+    def get_all_tables(self):
+        tables = {table.id: self._get_lists(table.id) for table in get_user_tables(self.validated_data["user"])}
+        return {"tables": tables}
 
     class Meta:
         model = Table
@@ -141,9 +150,17 @@ class CardListSerializer(serializers.ModelSerializer):
     pk = serializers.IntegerField(required=False)
 
     def get_card(self):
-        return Card.objects.get(
+        card = Card.objects.get(
             Q(list_id=self.validated_data["list"].pk) & Q(id=self.validated_data["pk"]) & IS_NOT_ARCHIVE
-        ).pretty_str()
+        )
+
+        comments = (comment.pretty_str() for comment in Comment.objects.filter(Q(card__id=card.pk)))
+        tasks = (task.pretty_str() for task in Task.objects.filter(Q(card__id=card.pk)))
+
+        card = card.pretty_str()
+        card.update({"task": tasks})
+        card.update({"comments": comments})
+        return card
 
     def get_cards(self):
         return [
@@ -164,12 +181,9 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         fields = ("id", "author", "text", "card")
 
 
-class CommentListSerializer(serializers.ModelSerializer):
-    pk = serializers.IntegerField(required=False)
-
-    def get_comments(self):
-        return [comment.pretty_str() for comment in Comment.objects.filter(Q(card_id=self.validated_data["card"].pk))]
+class TaskCreateSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=1024, required=True)
 
     class Meta:
-        model = Comment
-        fields = ("pk", "card")
+        model = Task
+        fields = ("id", "title", "is_done", "card")

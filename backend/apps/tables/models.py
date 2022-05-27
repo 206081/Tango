@@ -107,8 +107,28 @@ class Comment(models.Model):
 
     def pretty_str(self):
         return {
+            "id": self.pk,
             "text": self.text,
             "author": self.author.email,
+            "card": self.card.get_general_info(),
+            "created_at": self.created_at,
+        }
+
+
+class Task(models.Model):
+    card = models.ForeignKey(Card, verbose_name="Card", on_delete=models.CASCADE, blank=False, related_name="tasks")
+    title = models.CharField(verbose_name="Name", max_length=255)
+    is_done = models.BooleanField(verbose_name="Done", default=False)
+    created_at = models.DateTimeField(verbose_name="Created at", auto_now_add=timezone.now)
+
+    def __str__(self):
+        return self.title
+
+    def pretty_str(self):
+        return {
+            "id": self.pk,
+            "title": self.title,
+            "is_done": self.is_done,
             "card": self.card.get_general_info(),
             "created_at": self.created_at,
         }
