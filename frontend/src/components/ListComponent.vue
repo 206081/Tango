@@ -34,6 +34,7 @@ export default {
       cards: [],
       addCardMode: false,
       addCardName: null,
+      cardDetails: {},
     }
   },
   computed: {
@@ -74,8 +75,8 @@ export default {
     },
     async onCardClick(cardId) {
       try {
-        const details = await TablesService.getCardDetails(this.listData.table.id, this.listData.id, cardId)
-        this.showCardDetails(details)
+        this.cardDetails = await TablesService.getCardDetails(this.listData.table.id, this.listData.id, cardId)
+        this.showCardDetails(this.cardDetails, {table: this.listData.table.id, list: this.listData.id})
       } catch (error) {
         console.log(error)
       }

@@ -112,9 +112,12 @@ export default {
         this.addListMode = true;
       }
     },
-    openDialog(dialogData) {
+    openDialog(dialogData, ids, onTaskPush, onCommentPush) {
       openModal(CardDetailsComponent, {
-        data: dialogData
+        data: dialogData,
+        ids,
+        onTaskPush,
+        onCommentPush
       })
     }
   }

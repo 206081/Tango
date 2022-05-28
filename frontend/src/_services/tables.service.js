@@ -48,6 +48,33 @@ class TablesService {
         throw error;
       });
   }
+  async changeDescription(tableId, listId, cardId, newDesc) {
+    return api.patch(API_URL + tableId + '/lists/' + listId + '/cards/' + cardId + '/', {"description": newDesc})
+      .then(response => {
+        return response.data.detail;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
+  async addTask(tableId, listId, cardId, task) {
+    return api.post(API_URL + tableId + '/lists/' + listId + '/cards/' + cardId + '/tasks/', {"title": task})
+      .then(response => {
+        return response.data.detail;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
+  async addComment(tableId, listId, cardId, comment) {
+    return api.post(API_URL + tableId + '/lists/' + listId + '/cards/' + cardId + '/comments/', {"text": comment})
+      .then(response => {
+        return response.data.detail;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
   async addList(tableId, listName) {
     return api.post(API_URL + tableId + '/lists/', {"name": listName})
       .then(response => {
