@@ -19,6 +19,7 @@ class Table(models.Model):
         return {
             "id": self.pk,
             "name": self.name,
+            "members": [u.id for u in self.members.all()],
         }
 
     def get_details(self):
