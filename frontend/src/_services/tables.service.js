@@ -3,6 +3,19 @@ import api from "@/_services/api";
 const API_URL = '/api/tables/';
 
 class TablesService {
+  async getUsers() {
+    return api.get ('/api/users/').then(response => {
+      return response.data.map((res) => {
+        return {
+          id: res.id,
+          name: res.full_name,
+        }
+      })
+    })
+      .catch(error => {
+        throw error;
+      })
+  }
   async getAllTables() {
     return api.get(API_URL)
       .then(response => {
@@ -25,6 +38,15 @@ class TablesService {
     return api.post(API_URL, {"name": tableName})
       .then(response => {
       return response.data.detail;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
+  async addUserToTable(tableId, currentMembers, userId) {
+    return api.patch(API_URL + tableId + '/', {"members": [...currentMembers, userId]})
+      .then(response => {
+        return response.data.detail;
       })
       .catch(error => {
         throw error;

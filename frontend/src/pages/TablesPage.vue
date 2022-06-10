@@ -8,6 +8,13 @@
       <VueSelect v-else class="select" v-model="selectedTable" :options="tables" label-by="name" placeholder="Select table" close-on-select/>
       <button @click="onAddTableClick">Add table</button>
     </div>
+    <div v-if="selectedTable && users && users?.length > 0" class="controls">
+      <div v-if="inviteUserMode">
+        <VueSelect class="select" v-model="selectedUser" :options="users" label-by="name" placeholder="Invite user" close-on-select/>
+        <button @click="onInviteCancel">Cancel</button>
+      </div>
+      <button @click="onInviteClick">Invite user</button>
+    </div>
     <div class="lists-container">
       <div v-bind:key="list.id" v-for="list of lists">
         <ListComponent :show-card-details="openDialog"  :list-data="list" />
@@ -39,11 +46,14 @@ export default {
     return {
       addTableMode: false,
       addTableName: null,
+      inviteUserMode: null,
       addListMode: false,
       addListName: null,
       selectedTable: null,
+      selectedUser: null,
       tables: [],
       lists: [],
+      users: [],
     }
   },
   computed: {
@@ -63,9 +73,17 @@ export default {
       this.getLists(value.id)
       this.onCancelClick();
       this.onCancelListClick();
+      this.onInviteCancel();
+      this.getUsers();
     },
   },
   methods: {
+    async getUsers() {
+      TablesService.getUsers().then(users => {
+        const currentTable = JSON.parse(JSON.stringify(this.selectedTable))
+        this.users = users.filter((el) => !currentTable?.members?.includes(el.id))
+      })
+    },
     async getTables() {
       TablesService.getAllTables().then(tables => {
         this.tables = tables
@@ -80,6 +98,10 @@ export default {
       this.addTableName = null;
       this.addTableMode = false;
     },
+    onInviteCancel() {
+      this.inviteUserMode = false;
+      this.selectedUser = null;
+    },
     async onAddTableClick() {
       if (this.addTableMode) {
         try {
@@ -92,6 +114,23 @@ export default {
         }
       } else {
         this.addTableMode = true;
+      }
+    },
+    async onInviteClick() {
+      if (this.inviteUserMode) {
+        try {
+          await TablesService.addUserToTable(this.selectedTable.id, this.selectedTable.members, this.selectedUser.id).then(() => {
+            this.users = null;
+            this.selectedUser = null;
+            this.getUsers();
+          })
+        } catch (error) {
+          console.log(error)
+        } finally {
+          this.inviteUserMode = false;
+        }
+      } else {
+        this.inviteUserMode = true;
       }
     },
     onCancelListClick() {
